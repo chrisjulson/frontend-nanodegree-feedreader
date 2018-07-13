@@ -55,30 +55,31 @@ $(function() {
 
     /* TODO: Write a new test suite named "The menu" */
     describe ('The menu', function() {
-        let body = document.body;
-        let menuIcon = document.querySelector('.menu-icon-link');
+        let body = $('body');
+        let menuIcon = $('a.menu-icon-link');
     
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
-        it('body has menu-hidden at load', function() {
-            expect(body.className).toContain('menu-hidden');
+        it('is hidden by default', function() {
+            expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
 
-         /* TODO: Write a test that ensures the menu changes
+        /* TODO: Write a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
           * should have two expectations: does the menu display when
           * clicked and does it hide when clicked again.
           */
-        it('body toggles menu-hidden on click of the menu icon', function() {
-            menuIcon.click();
-            expect(body.className).not.toContain('menu-hidden');
+        it('is displayed when clicked, than hidden on second click', function() {
+            menuIcon.trigger('click');
+            expect($('body').hasClass('menu-hidden')).toBeTruthy();
 
-            menuIcon.click();
-            expect(body.className).toContain('menu-hidden');
+            menuIcon.trigger('click');
+            expect($('body').hasClass('menu-hidden')).toBeTruthy();
         });
+
     });
     /* TODO: Write a new test suite named "Initial Entries" */
     describe('Initial Entries', function() {
@@ -89,42 +90,35 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
-   
         beforeEach(function(done) {
-            loadFeed(0, function() {
-                done();
-            });
+            loadFeed(0, done);
         });
-        //load function finishes and should be at least one entry in the feed array
-        it('has at least one entery after load function is called', function() {
-            let numEntries = document.querySelector('.feed').getElementsByClassName('entery').length;
-            expect(numEntries).tobeGreaterThan(0);
+
+        it('has been loaded with at least one entery', function(done) {
+            expect($('.feed').children().length).toBeGreaterThan(0);
             done();
         });
+
     });  
 
     /* TODO: Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function(){
+        let feedTitle;
 
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
-        let testFeed;
-
+        
+        //finds and stores the title of the first feed and stores it for later comparison
         beforeEach(function(done) {
-            loadFeed(0, function() {
-                testFeed = document.querySelector('.feed').innerHTML;
-                loadFeed(1, function() {
-                    done();
-                });
-            });
+            feedTitle = $('.header').find('h1').text();
+            loadFeed(1, done);
         });
 
-        // test to make sure when a new feed is loaded using loadFeed the content is changed;
-        it('changes the loaded content', function() {
-            let newFeedSelection = document.querySelector('.feed').innerHTML;
-            expect(testFeed).not.toBe(newFeedSelection);
+        //makes sure a new feed is loaded by compareing the current title with the stored "previous" title
+        it('new feed has been loaded', function(done) {
+            expect($('.header').find('h1').text()).not.toBe(feedTitle);
             done();
         });
     });
